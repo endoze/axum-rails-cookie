@@ -1,0 +1,41 @@
+[package]
+name = "axum-rails-cookie"
+version = "0.1.0"
+edition = "2021"
+description = "Extract rails session cookies in axum based apps."
+authors = ["Endoze <endoze@endozemedia.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/Endoze/axum-rails-cookie"
+documentation = "https://docs.rs/axum-rails-cookie"
+homepage = "https://github.com/Endoze/axum-rails-cookie"
+rust-version = "1.70.0"
+
+[dependencies]
+axum = "0.7.7"
+tokio = {version = "1.41.0", features=["full"]}
+thiserror = "2.0"
+axum-macros = "0.4"
+axum-extra = {version = "0.9", features=["cookie", "cookie-private"]}
+message_verifier = "2.0"
+
+[dev-dependencies]
+tower = "0.5"
+
+# The profile that 'cargo dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
+
+# Config for 'cargo dist'
+[workspace.metadata.dist]
+# The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
+cargo-dist-version = "0.4.2"
+# CI backends to support
+ci = ["github"]
+# The installers to generate for each app
+installers = ["shell", "powershell"]
+# Target platforms to build apps for (Rust target-triple syntax)
+targets = ["x86_64-unknown-linux-gnu", "aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-unknown-linux-musl", "x86_64-pc-windows-msvc"]
+# Publish jobs to run in CI
+pr-run-mode = "plan"
