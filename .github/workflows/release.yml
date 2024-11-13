@@ -76,7 +76,7 @@ jobs:
       # but also really annoying to build CI around when it needs secrets to work right.)
       - id: plan
         run: |
-          if [ -n "${{ needs.plan.outputs.tag }}" ]; then
+          if [ -n "${{ !github.event.pull_request && github.ref_name || '' }}" ]; then
             dist ${{ format('host --steps=create --tag={0}', github.ref_name) }} --output-format=json > plan-dist-manifest.json
             echo "dist ran successfully"
             cat plan-dist-manifest.json
