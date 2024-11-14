@@ -1,6 +1,6 @@
 [package]
 name = "axum-rails-cookie"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 description = "Extract rails session cookies in axum based apps."
 authors = ["Endoze <endoze@endozemedia.com>"]
