@@ -55,6 +55,7 @@ jobs:
       publishing: ${{ !github.event.pull_request }}
     env:
       GH_TOKEN: ${{ secrets.RELEASE_PLZ_TOKEN }}
+      CARGO_DIST_VERSION: a8077660fcae20ecda0e6709d6f42f0f542f5852
     steps:
       - uses: actions/checkout@v4
         with:
@@ -62,10 +63,19 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: stable
+      - name: Cache Cargo dist bin
+        id: cache-cargo-dist-bin
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin/dist
+          key: ${{ runner.os }}-cargo-dist-${{ env.CARGO_DIST_VERSION }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-dist-
       - name: Install dist
         # we specify bash to get pipefail; it guards against the `curl` command
         # failing. otherwise `sh` won't catch that `curl` returned non-0
         shell: bash
+        if: steps.cache-cargo-dist-bin.outputs.cache-hit != 'true'
         run: "cargo install --git https://github.com/axodotdev/cargo-dist --rev a8077660fcae20ecda0e6709d6f42f0f542f5852 cargo-dist"
       - name: Cache dist
         uses: actions/upload-artifact@v4
