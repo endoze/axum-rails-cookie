@@ -2,10 +2,9 @@
 #![doc = include_str!("../README.md")]
 
 use axum::{
-  async_trait,
+  RequestPartsExt,
   extract::{Extension, FromRequestParts},
   http::request::Parts,
-  RequestPartsExt,
 };
 use axum_extra::extract::CookieJar;
 use message_verifier::{AesGcmEncryptor, AesHmacEncryptor, DerivedKeyParams, Encryptor};
@@ -101,7 +100,6 @@ pub enum RailsCookie {
   Err(RailsCookieError),
 }
 
-#[async_trait]
 impl<S> FromRequestParts<S> for RailsCookie
 where
   S: Send + Sync + 'static,
@@ -115,9 +113,7 @@ where
       return Ok(RailsCookie::Err(RailsCookieError::Config));
     };
 
-    let Ok(cookie_jar) = parts.extract::<CookieJar>().await else {
-      return Ok(RailsCookie::Err(RailsCookieError::CookieJar));
-    };
+    let Ok(cookie_jar) = parts.extract::<CookieJar>().await;
 
     let Some(cookie) = cookie_jar.get(config.name) else {
       return Ok(RailsCookie::Err(RailsCookieError::CookieRetrieval));
@@ -160,14 +156,14 @@ where
 
 #[cfg(test)]
 mod tests {
-  use crate::{CookieAlgorithm, CookieConfig, RailsCookie, ENCRYPTION_SALT, SIGNING_SALT};
+  use crate::{CookieAlgorithm, CookieConfig, ENCRYPTION_SALT, RailsCookie, SIGNING_SALT};
   use axum::{
-    body::{to_bytes, Body},
+    Router,
+    body::{Body, to_bytes},
     extract::Extension,
-    http::{header, HeaderMap, Request},
+    http::{HeaderMap, Request, header},
     response::Response,
     routing::get,
-    Router,
   };
   use axum_extra::extract::cookie::Cookie;
   use axum_macros::debug_handler;

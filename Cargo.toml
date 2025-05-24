@@ -1,7 +1,7 @@
 [package]
 name = "axum-rails-cookie"
 version = "0.1.4"
-edition = "2021"
+edition = "2024"
 description = "Extract rails session cookies in axum based apps."
 authors = ["Endoze <endoze@endozemedia.com>"]
 license = "MIT"
@@ -9,17 +9,17 @@ readme = "README.md"
 repository = "https://github.com/Endoze/axum-rails-cookie"
 documentation = "https://docs.rs/axum-rails-cookie"
 homepage = "https://github.com/Endoze/axum-rails-cookie"
-rust-version = "1.70.0"
+rust-version = "1.86.0"
 
 [lib]
 name = "axum_rails_cookie"
 
 [dependencies]
-axum = "0.7.7"
+axum = "0.8.4"
 tokio = {version = "1.41.0", features=["full"]}
 thiserror = "2.0"
-axum-macros = "0.4"
-axum-extra = {version = "0.9", features=["cookie", "cookie-private"]}
+axum-macros = "0.5.0"
+axum-extra = {version = "0.10.1", features=["cookie", "cookie-private"]}
 message_verifier = "2.0"
 
 [dev-dependencies]
