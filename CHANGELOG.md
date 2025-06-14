@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6](https://github.com/endoze/axum-rails-cookie/compare/v0.1.5...v0.1.6) - 2025-06-14
+
+### Other
+
+- Add keywords and categories for crates.io
+
 ## [0.1.5](https://github.com/endoze/axum-rails-cookie/compare/v0.1.4...v0.1.5) - 2025-05-24
 
 ### Other
