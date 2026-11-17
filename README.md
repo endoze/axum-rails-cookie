@@ -26,7 +26,7 @@ axum = "0.7.7"
 tokio = {version = "1.41.0", features=["full"]}
 anyhow = "1.0"
 axum-macros = "0.4"
-axum-rails-cookie = "0.1.0"
+axum-rails-cookie = "0.2"
 ```
 
 main.rs:
