@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0](https://github.com/endoze/axum-rails-cookie/compare/v0.1.6...v0.2.0) - 2026-11-18
+
+### Added
+
+- [**breaking**] maintenance pass for dependencies, CI, and release tooling
+
+### Other
+
+- move actions off deprecated Node runtimes, pin to SHAs
+
 ## [0.1.6](https://github.com/endoze/axum-rails-cookie/compare/v0.1.5...v0.1.6) - 2025-06-14
 
 ### Other
