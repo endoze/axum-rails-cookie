@@ -17,6 +17,7 @@ const SIGNING_SALT: &str = "signed encrypted cookie";
 
 /// Represents different errors that can occur during cookie retrieval.
 #[derive(thiserror::Error, Debug)]
+#[non_exhaustive]
 pub enum RailsCookieError {
   /// Error retrieving CookieConfig
   #[error("Failed to extract Config")]
@@ -156,7 +157,9 @@ where
 
 #[cfg(test)]
 mod tests {
-  use crate::{CookieAlgorithm, CookieConfig, ENCRYPTION_SALT, RailsCookie, SIGNING_SALT};
+  use crate::{
+    CookieAlgorithm, CookieConfig, ENCRYPTION_SALT, RailsCookie, RailsCookieError, SIGNING_SALT,
+  };
   use axum::{
     Router,
     body::{Body, to_bytes},
@@ -214,6 +217,42 @@ mod tests {
     };
 
     encryptor.encrypt_and_sign(message).unwrap()
+  }
+
+  /// Generate an AES-HMAC cookie whose signature is valid for `secret` but whose
+  /// payload decrypts to bytes that are not valid UTF-8.
+  ///
+  /// `encrypt_and_sign` only accepts `&str`, so this encrypts under a different
+  /// encryption salt with the real signing salt and keeps the first cookie that
+  /// the real key decrypts to non-UTF-8 bytes. About 1 in 256 attempts succeeds.
+  ///
+  /// # Arguments
+  /// * `secret` - Secret to derive encryption and signing keys from
+  fn generate_non_utf8_aes_hmac_cookie(secret: &str) -> String {
+    let wrong_key = AesHmacEncryptor::new(
+      secret,
+      "other encryption salt",
+      SIGNING_SALT,
+      DerivedKeyParams::default(),
+    )
+    .unwrap();
+    let real_key = AesHmacEncryptor::new(
+      secret,
+      ENCRYPTION_SALT,
+      SIGNING_SALT,
+      DerivedKeyParams::default(),
+    )
+    .unwrap();
+
+    (0..100_000)
+      .map(|_| wrong_key.encrypt_and_sign("hello world").unwrap())
+      .find(|cookie| {
+        matches!(
+          real_key.decrypt_and_verify(cookie),
+          Ok(bytes) if std::str::from_utf8(&bytes).is_err()
+        )
+      })
+      .expect("no cookie decrypted to non-UTF-8 bytes")
   }
 
   /// Generates an axum router and request based on the AppRequestConfig param.
@@ -377,6 +416,31 @@ mod tests {
       let body = get_response_body(response).await;
 
       assert_eq!(body, "Failed to decrypt cookie data");
+    }
+
+    #[tokio::test]
+    async fn test_non_utf8_cookie_extraction() {
+      let secret_key_base = "3b53beba93922c29b3c335051f79e41c63fe626834d5a4a7ce96ebd189010063";
+      let config = CookieConfig::new("test_cookie", secret_key_base, CookieAlgorithm::AesHmac);
+      let app = Router::new()
+        .route("/", get(test_handler))
+        .layer(Extension(config));
+      let cookie = Cookie::new(
+        "test_cookie",
+        generate_non_utf8_aes_hmac_cookie(secret_key_base),
+      );
+      let request = Request::builder()
+        .uri("/")
+        .header(header::COOKIE, cookie.to_string())
+        .body(Body::empty())
+        .unwrap();
+      let response = app.oneshot(request).await.unwrap();
+
+      assert_eq!(response.status(), 200);
+
+      let body = get_response_body(response).await;
+
+      assert_eq!(body, RailsCookieError::CookieParse.to_string());
     }
   }
 

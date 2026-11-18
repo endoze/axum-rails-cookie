@@ -8,8 +8,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/Endoze/axum-rails-cookie"
 documentation = "https://docs.rs/axum-rails-cookie"
-homepage = "https://github.com/Endoze/axum-rails-cookie"
-rust-version = "1.86.0"
+rust-version = "1.88.0"
 keywords = ["axum", "rails", "cookie", "session", "web"]
 categories = ["asynchronous", "web-programming", "web-programming::http-server"]
 

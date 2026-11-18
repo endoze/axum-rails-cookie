@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+    # Also update indirect dependencies: release-plz no longer runs cargo update.
+    allow:
+      - dependency-type: all
+    cooldown:
+      default-days: 14
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      cargo:
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      github-actions:
+        patterns:
+          - "*"
