@@ -33,6 +33,9 @@ jobs:
         run: cargo fmt --all --check
       - name: Clippy
         run: cargo clippy --all-targets --all-features --locked -- -D warnings
+      # Builds the crate as published; some cargo warnings only appear there.
+      - name: Verify package
+        run: cargo package --locked
 
   msrv:
     name: Minimum Rust version
