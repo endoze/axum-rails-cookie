@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1](https://github.com/endoze/axum-rails-cookie/compare/v0.2.0...v0.2.1) - 2026-11-18
+
+### Other
+
+- exclude repo tooling from the published crate
+
 ## [0.2.0](https://github.com/endoze/axum-rails-cookie/compare/v0.1.6...v0.2.0) - 2026-11-18
 
 ### Added
